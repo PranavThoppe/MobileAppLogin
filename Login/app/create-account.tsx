@@ -1,17 +1,39 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
-import { Link } from 'expo-router';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleLogin = () => {
-    // Just a simple check for this demo
-    if (username === 'user' && password === 'password') {
-      Alert.alert('Login Successful', 'Welcome!');
-    } else {
-      Alert.alert('Login Failed', 'Incorrect username or password');
+  const handleCreateAccount = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Password Error', 'Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:5000/create_user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', data.message);
+      } else {
+        Alert.alert('Error', data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'An unexpected error occurred.');
     }
   };
 
@@ -26,7 +48,7 @@ export default function Login() {
         placeholderTextColor="black"
         value={username}
         onChangeText={setUsername}
-        autoCapitalize= 'none'
+        autoCapitalize="none"
       />
 
       {/* Password Input */}
@@ -37,27 +59,24 @@ export default function Login() {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-        autoCapitalize= 'none'
+        autoCapitalize="none"
       />
+
+      {/* Confirm Password Input */}
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
         placeholderTextColor="black"
         secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize= 'none'
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        autoCapitalize="none"
       />
 
-        
-
-
-      {/* Login Button */}
-      <Pressable style={styles.button} onPress={handleLogin}>
+      {/* Create Account Button */}
+      <Pressable style={styles.button} onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create Account</Text>
       </Pressable>
-
-
     </View>
   );
 }
@@ -82,7 +101,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    
   },
   button: {
     width: '100%',
@@ -90,21 +108,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'turquoise',
     borderRadius: 5,
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
-  },
-  signUpText: {
-    marginTop: 20,
-    fontSize: 16,
-    color: '#007BFF',
-    textDecorationLine: 'underline',
-  },
-  linkText: {
-    fontSize: 18,
-    color: '#007BFF', // Blue color for the link
-    textDecorationLine: 'underline',
   },
 });

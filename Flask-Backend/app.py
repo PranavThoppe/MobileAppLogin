@@ -1,11 +1,13 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError  # Import IntegrityError for handling unique constraint
 import os
+from flask_cors import CORS
+
+
 
 # Initialize Flask app
 app = Flask(__name__)
-
+CORS(app)
 # Database configuration for SQLite
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:LogInService@db.mnpvdfpvgigzueetczao.supabase.co:5432/postgres'
@@ -27,50 +29,31 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-# HTML template for the input form
-form_template = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Flask User Form</title>
-</head>
-<body>
-    <h1>Enter User Information</h1>
-    <form method="POST" action="/">
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
-        <input type="submit" value="Submit">
-    </form>
-    <h2>{{ message }}</h2>
-</body>
-</html>
-"""
+# Route for handling user creation or login
+@app.route('/create_user', methods=['POST'])
+def create_user():
+    try:
+        # Parse JSON data from the request
+        data = request.get_json()
 
-# Route for input form and data submission
-@app.route("/", methods=["GET", "POST"])
-def home():
-    message = ""
-    if request.method == "POST":
-        # Get form data
-        username = request.form.get("username")
-        password = request.form.get("password")
+        # Get the username and password
+        username = data.get('username')
+        password = data.get('password')
 
-        # Add the user to the database
-        try:
-            new_user = User(username=username, password=password)
-            db.session.add(new_user)
-            db.session.commit()
-            message = f"User '{username}' has been added successfully!"
-        except IntegrityError:
-            db.session.rollback()
-            message = f"Error: Username '{username}' already exists. Please choose a different username."
-        except Exception as e:
-            db.session.rollback()
-            message = f"An unexpected error occurred: {str(e)}"
+        # Print the username and password to the console
+        print(f"Received Username: {username}")
+        print(f"Received Password: {password}")
 
-    return render_template_string(form_template, message=message)
+        # Optionally, create the user in the database
+        new_user = User(username=username, password=password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({"message": f"User {username} created successfully!"})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"message": "An error occurred while creating the user."}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

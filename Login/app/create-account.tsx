@@ -1,10 +1,12 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 
-export default function Login() {
+export default function CreateAccount() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
 
   const handleCreateAccount = async () => {
     if (password !== confirmPassword) {
@@ -27,7 +29,8 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', data.message);
+        console.log("Account created successfully!");
+        router.push('/login');
       } else {
         Alert.alert('Error', data.message);
       }
@@ -41,7 +44,6 @@ export default function Login() {
     <View style={styles.container}>
       <Text style={styles.title}>Create Your Account!</Text>
 
-      {/* Username Input */}
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -51,7 +53,6 @@ export default function Login() {
         autoCapitalize="none"
       />
 
-      {/* Password Input */}
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -62,7 +63,6 @@ export default function Login() {
         autoCapitalize="none"
       />
 
-      {/* Confirm Password Input */}
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
@@ -73,7 +73,6 @@ export default function Login() {
         autoCapitalize="none"
       />
 
-      {/* Create Account Button */}
       <Pressable style={styles.button} onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create Account</Text>
       </Pressable>

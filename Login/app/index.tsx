@@ -12,7 +12,7 @@ export default function Index() {
       <Image source={LogoPlaceHolder} style={styles.logo} />
 
       {/* Get Started Button */}
-      <Pressable style={styles.button} onPress={() => alert('Button Pressed!')}>
+      <Pressable style={styles.button}>
       <Link href="/create-account" style={styles.buttonText}>
         Get Started
       </Link>

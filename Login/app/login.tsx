@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
-import { Link } from 'expo-router';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { Link, useRouter } from 'expo-router';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState(''); // State to store the error message
+  const router = useRouter(); // Use router for navigation
 
   const handleLogin = async () => {
+    // Clear error message at the start of a login attempt
+    setErrorMessage('');
     try {
       const response = await fetch('http://127.0.0.1:5000/login', {
         method: 'POST',
@@ -19,14 +23,20 @@ export default function Login() {
       const result = await response.json();
 
       if (response.ok) {
-        Alert.alert('Login Successful', result.message);
+        router.push('/login-success'); // Navigate to the success screen
       } else {
-        Alert.alert('Login Failed', result.message);
+        setErrorMessage(result.message || 'Incorrect credentials. Please try again.'); // Set error message
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      Alert.alert('Error', 'An error occurred. Please try again.');
+      setErrorMessage('An error occurred. Please try again.'); // Set error message for network or other errors
     }
+  };
+
+  const handleInputChange = (setter) => (value) => {
+    // Clear error message when the user starts typing again
+    setErrorMessage('');
+    setter(value);
   };
 
   return (
@@ -39,7 +49,7 @@ export default function Login() {
         placeholder="Username"
         placeholderTextColor="black"
         value={username}
-        onChangeText={setUsername}
+        onChangeText={handleInputChange(setUsername)}
         autoCapitalize="none"
       />
 
@@ -50,16 +60,16 @@ export default function Login() {
         placeholderTextColor="black"
         secureTextEntry
         value={password}
-        onChangeText={setPassword}
+        onChangeText={handleInputChange(setPassword)}
         autoCapitalize="none"
       />
+
+      {/* Error Message */}
+      {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
 
       {/* Login Button */}
       <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
-        <Link href="/create-account" style={styles.buttonText}>
-          Get Started
-        </Link>
       </Pressable>
 
       {/* Create an Account Text */}
@@ -91,6 +101,11 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     color: 'black',
+  },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 15,
+    fontSize: 16,
   },
   button: {
     width: '100%',

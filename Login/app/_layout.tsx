@@ -34,6 +34,7 @@ export default function RootLayout() {
         <Stack.Screen name="+not-found" />
         <Stack.Screen name="login" options={{ headerShown: false }} />
         <Stack.Screen name="create-account" options={{ headerShown: false }} />
+        <Stack.Screen name="login-success" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="dark" />
     </ThemeProvider>

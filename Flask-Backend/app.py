@@ -54,6 +54,34 @@ def create_user():
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"message": "An error occurred while creating the user."}), 500
+    
+# Route for user login
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        # Parse JSON data from the request
+        data = request.get_json()
+
+        # Get the username and password from the request
+        username = data.get('username')
+        password = data.get('password')
+
+        # Check if the username exists in the database
+        user = User.query.filter_by(username=username).first()
+
+        if user:
+            # Verify the password
+            if user.password == password:
+                return jsonify({"message": "Login successful!"}), 200
+            else:
+                return jsonify({"message": "Invalid password."}), 401
+        else:
+            return jsonify({"message": "User not found."}), 404
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"message": "An error occurred during login."}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

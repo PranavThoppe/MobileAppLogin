@@ -6,12 +6,26 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Just a simple check for this demo
-    if (username === 'user' && password === 'password') {
-      Alert.alert('Login Successful', 'Welcome!');
-    } else {
-      Alert.alert('Login Failed', 'Incorrect username or password');
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Login Successful', result.message);
+      } else {
+        Alert.alert('Login Failed', result.message);
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      Alert.alert('Error', 'An error occurred. Please try again.');
     }
   };
 
@@ -26,7 +40,7 @@ export default function Login() {
         placeholderTextColor="black"
         value={username}
         onChangeText={setUsername}
-        autoCapitalize= 'none'
+        autoCapitalize="none"
       />
 
       {/* Password Input */}
@@ -37,18 +51,21 @@ export default function Login() {
         secureTextEntry
         value={password}
         onChangeText={setPassword}
-        autoCapitalize= 'none'
+        autoCapitalize="none"
       />
 
       {/* Login Button */}
       <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
+        <Link href="/create-account" style={styles.buttonText}>
+          Get Started
+        </Link>
       </Pressable>
 
       {/* Create an Account Text */}
       <Link href={'/create-account'} style={styles.linkText}>
-              Create Account
-            </Link>
+        Create Account
+      </Link>
     </View>
   );
 }
@@ -74,7 +91,6 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     color: 'black',
-    
   },
   button: {
     width: '100%',
@@ -82,21 +98,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'turquoise',
     borderRadius: 5,
     alignItems: 'center',
-    marginBottom: 15
+    marginBottom: 15,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
   },
-  signUpText: {
-    marginTop: 20,
-    fontSize: 16,
-    color: '#007BFF',
-    textDecorationLine: 'underline',
-  },
   linkText: {
     fontSize: 18,
-    color: '#007BFF', // Blue color for the link
+    color: '#007BFF',
     textDecorationLine: 'underline',
   },
 });

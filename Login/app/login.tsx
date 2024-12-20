@@ -12,7 +12,7 @@ export default function Login() {
     // Clear error message at the start of a login attempt
     setErrorMessage('');
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
+      const response = await fetch('https://login-vercel-deployment.vercel.app/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

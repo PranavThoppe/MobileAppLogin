@@ -27,8 +27,10 @@ export default function RootLayout() {
     return null;
   }
 
+  const theme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme} children={''}>
+    <ThemeProvider value={theme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />

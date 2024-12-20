@@ -15,7 +15,7 @@ export default function CreateAccount() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/create_user', {
+      const response = await fetch('https://login-vercel-deployment.vercel.app/create_user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

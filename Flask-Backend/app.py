@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 # Database configuration for SQLite
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:LogInService@db.mnpvdfpvgigzueetczao.supabase.co:5432/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = '[Databse Url]'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database
